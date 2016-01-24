@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:p="http://www.springframework.org/schema/p"
-	xmlns="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns="http://www.springframework.org/schema/security"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
@@ -11,12 +9,26 @@
 	<http auto-config="true">
 		<intercept-url pattern="/**" access="ROLE_USER" />
 	</http>
-	
+
 	<authentication-manager>
+		<!-- 2nd <authentication-provider user-service-ref="userDetailsService"> -->
 		<authentication-provider>
-			<user-service>
-				<user name="harshana" password="secret" authorities="ROLE_USER"/>
-			</user-service>
+			<password-encoder hash="bcrypt" />
+			<jdbc-user-service data-source-ref="dataSource" />
+			<!-- 1st <user-service> <user name="harshana" password="secret" authorities="ROLE_USER"/> 
+				</user-service> -->
 		</authentication-provider>
 	</authentication-manager>
+
+	<beans:bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<beans:property name="url" value="jdbc:mysql://localhost:3306/fitnesstracker" />
+		<beans:property name="username" value="root" />
+		<beans:property name="password" value="12345678" />
+	</beans:bean>
+
+	<!-- 2nd -->
+	<!-- <beans:bean id="userDetailsService" class="org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl"> 
+		<beans:property name="dataSource" ref="dataSource"></beans:property> </beans:bean> -->
 </beans:beans>
